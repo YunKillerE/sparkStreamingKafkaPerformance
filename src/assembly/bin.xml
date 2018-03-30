@@ -1,0 +1,40 @@
+ <assembly>
+    <formats>
+        <format>tar.gz</format>
+    </formats>
+<!--	<files>
+	    <file>
+		   <source>template_file_list</source>
+		   <fileMode>644</fileMode>
+		   <lineEnding>unix</lineEnding>
+		</file>
+	</files>-->
+    <fileSets>
+        <fileSet>
+            <directory>smokeData</directory>
+            <outputDirectory>smokeData</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>bin</directory>
+            <outputDirectory>bin</outputDirectory>
+            <directoryMode>0755</directoryMode>
+            <fileMode>0755</fileMode>
+            <includes>
+                <include>*.sh</include>
+            </includes>
+            <lineEnding>unix</lineEnding>
+        </fileSet>
+
+        <fileSet>
+            <directory>target</directory>
+            <outputDirectory>lib</outputDirectory>
+            <fileMode>0644</fileMode>
+            <includes>
+                <include>${project.name}-${project.version}.jar</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+
+
+
+</assembly>
