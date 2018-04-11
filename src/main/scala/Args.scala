@@ -32,5 +32,13 @@ class Args extends Serializable {
 
   @Parameter(names = Array("-batchSize"), required = false) var batchSize: String = "65536"
 
+  @Parameter(names = Array("-allowOverwrite"), required = false) var allowOverwrite: Boolean = true
+
+  @Parameter(names = Array("-primaryKey"), required = false) var primaryKey: String = "guiyls,kehhao,jioysj"
+
+  @Parameter(names = Array("-writeMode"), required = false) var writeMode: String = "Append"
+
+  @Parameter(names = Array("-tableParameters"), required = false) var tableParameters: String = "BACKUPS=1, ATOMICITY=TRANSACTIONAL, CACHE_NAME=yc, DATA_REGION=Default_Region"
+
 
 }

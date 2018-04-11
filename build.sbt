@@ -24,6 +24,7 @@ libraryDependencies ++= Seq(
   "com.beust" % "jcommander" % "1.72",
   "mysql" % "mysql-connector-java" % "5.1.38",
   "org.apache.ignite" %% "ignite-spark" % igniteVersion,
+  "org.apache.ignite" %% "ignite-core" % igniteVersion,
   "org.apache.spark" %% "spark-streaming-kafka-0-10" % sparkVersion
 )
 

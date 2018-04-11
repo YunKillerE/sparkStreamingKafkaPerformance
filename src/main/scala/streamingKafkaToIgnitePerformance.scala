@@ -31,7 +31,7 @@ object streamingKafkaToIgnitePerformance {
       */
     log.info("初始sparkcontext和kuducontext")
     val spark = SparkSession.builder().appName(argv.appName).enableHiveSupport().getOrCreate()
-    spark.sparkContext.getConf.registerKryoClasses(Array(classOf[Args]))
+    spark.sparkContext.getConf.registerKryoClasses(Array(classOf[Args],classOf[eventRow]))
 
     val ssc = new StreamingContext(spark.sparkContext, Duration(argv.durationTime))
     ssc.checkpoint("/tmp/streamingToIgnite")
@@ -59,11 +59,6 @@ object streamingKafkaToIgnitePerformance {
       "enable.auto.commit" -> (false: java.lang.Boolean)
     )
     val topics = Array(argv.topic)
-/*    val numStreams = argv.partitionNum
-    val kafkaStreams = (1 to numStreams).map { i =>
-      KafkaUtils.createDirectStream[String, String](ssc, PreferConsistent, Subscribe[String, String](topics, kafkaParams))
-    }
-    val stream = ssc.union(kafkaStreams)*/
 
     val stream =  KafkaUtils.createDirectStream[String, String](ssc, PreferConsistent, Subscribe[String, String](topics, kafkaParams))
 
@@ -75,38 +70,45 @@ object streamingKafkaToIgnitePerformance {
     var offsetRanges = Array[OffsetRange]()
 
     stream.foreachRDD(rdd => {
-      offsetRanges = rdd.asInstanceOf[HasOffsetRanges].offsetRanges
 
-      /**
-        * 仅测试，输出offset， key， value
-        *
-        * 如果要存储offset也可以用同样的方法去做
-        */
-      /*
+
+        offsetRanges = rdd.asInstanceOf[HasOffsetRanges].offsetRanges
+
+        /**
+          * 仅测试，输出offset， key， value
+          *
+          * 如果要存储offset也可以用同样的方法去做
+          */
+        /*
             for (record <- rdd) {
                 System.out.printf("offset = %d, key = %s, value = %s\n",
                 record.offset(), record.key(), record.value());
             }
       */
 
-      val valueRDD = rdd.map(_.value().split(","))
+        val valueRDD = rdd.map(_.value().split(","))
 
-      log.info("开始写入kudu")
-      import spark.implicits._
-      val df = valueRDD.map(x => eventRow(x(0).replace("(",""), x(1), x(2), x(3), x(4), x(5), x(6), x(7), x(8), x(9), x(10), x(11), x(12).replace(")",""))).toDF()
-      df.write
-        .format(FORMAT_IGNITE)
-        .option(OPTION_CONFIG_FILE, argv.igniteconfxml)
-        .option(OPTION_TABLE, argv.cachename)
-        .mode("Append")
-        .option(OPTION_STREAMER_ALLOW_OVERWRITE,true)
-        .option(OPTION_CREATE_TABLE_PRIMARY_KEY_FIELDS, "guiyls,kehhao")
-        .option(OPTION_CREATE_TABLE_PARAMETERS, "BACKUPS=2, ATOMICITY=TRANSACTIONAL, CACHE_NAME=yc, CACHE_GROUP=ym")
-        .save()
-      stream.asInstanceOf[CanCommitOffsets].commitAsync(offsetRanges)
+        log.info("开始写入ignite")
+
+        import spark.implicits._
+        val df = valueRDD.map(x => eventRow(x(0).replace("(", ""), x(1), x(2), x(3), x(4), x(5), x(6), x(7), x(8), x(9),
+          x(10), x(11), x(12).replace(")", ""))).toDF()
+
+        df.write
+          .format(FORMAT_IGNITE)
+          .option(OPTION_CONFIG_FILE, argv.igniteconfxml)
+          .option(OPTION_TABLE, argv.cachename)
+          .mode(argv.writeMode)
+          .option(OPTION_STREAMER_ALLOW_OVERWRITE, argv.allowOverwrite)
+          .option(OPTION_CREATE_TABLE_PRIMARY_KEY_FIELDS, argv.primaryKey)
+          .option(OPTION_CREATE_TABLE_PARAMETERS, argv.tableParameters)
+          .save()
+
+        stream.asInstanceOf[CanCommitOffsets].commitAsync(offsetRanges)
 
     })
 
+    // TODO 判断流是否为空，如果为空则不提交任务，节省调度时间
     ssc.start()
     ssc.awaitTermination()
 

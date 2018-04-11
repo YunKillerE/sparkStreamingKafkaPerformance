@@ -35,7 +35,7 @@ object dataImportKafkaPerformance {
       .config("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
       .getOrCreate()
 
-    spark.sparkContext.getConf.registerKryoClasses(Array(classOf[Args]))
+    spark.sparkContext.getConf.registerKryoClasses(Array(classOf[Args],classOf[eventRow]))
 
     import spark.implicits._
 

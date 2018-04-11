@@ -3,7 +3,7 @@
 ## 1，正常运行，采用默认参数
 
     spark2-submit \
-    --executor-memory 20G --executor-cores 7 --num-executors 20 \
+    --executor-memory 8G --executor-cores 7 --num-executors 10 \
     --class dataImportKafkaPerformance \
     --master yarn \
     --deploy-mode client \
@@ -21,7 +21,7 @@
 ## 2，增加参数并发以及executor优化
 
     spark2-submit \
-    --executor-memory 20G --executor-cores 7 --num-executors 20 \
+    --executor-memory 8G --executor-cores 7 --num-executors 10 \
     --conf spark.default.parallelism=1000 \
     --conf spark.storage.memoryFraction=0.5 \
     --conf spark.shuffle.memoryFraction=0.3 \
@@ -41,7 +41,7 @@
 ## 3.增加GC的优化
 
     spark2-submit \
-    --executor-memory 20G --executor-cores 7 --num-executors 20 \
+    --executor-memory 8G --executor-cores 7 --num-executors 10 \
     --conf spark.default.parallelism=1000 \
     --conf spark.storage.memoryFraction=0.5 \
     --conf spark.shuffle.memoryFraction=0.3 \

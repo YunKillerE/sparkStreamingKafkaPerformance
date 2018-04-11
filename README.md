@@ -32,8 +32,7 @@
 
 [PerformanceTestResult](./PerformanceTestResult.md)
 
-
-
+问题：平均写入tps只能达到1万左右，而且写入数据量越多越慢，初步分析是三个联合主键导致，将主键改为单个主键的情况，tps可以达到6万左右
 
 
 
