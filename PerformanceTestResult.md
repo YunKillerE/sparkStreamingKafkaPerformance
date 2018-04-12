@@ -8,7 +8,7 @@
 
     spark2-submit \
     --executor-memory 8G --executor-cores 4 --num-executors 10 \
-    --class dataImportKafkaPerformance \
+    --class textProject.dataImportKafkaPerformance \
     --master yarn \
     --deploy-mode client \
     ./sparkstreamingkafkaperformance-1.0-SNAPSHOT.jar \
@@ -32,7 +32,7 @@
     --conf spark.default.parallelism=1000 \
     --conf spark.storage.memoryFraction=0.5 \
     --conf spark.shuffle.memoryFraction=0.3 \
-    --class dataImportKafkaPerformance \
+    --class textProject.dataImportKafkaPerformance \
     --master yarn \
     --deploy-mode client \
     ./sparkstreamingkafkaperformance-1.0-SNAPSHOT.jar \
@@ -56,7 +56,7 @@
     --executor-memory 20G --executor-cores 5 --num-executors 10 \
     --conf spark.storage.memoryFraction=0.7 \
     --conf spark.shuffle.memoryFraction=0.1 \
-    --class dataImportKafkaPerformance \
+    --class textProject.dataImportKafkaPerformance \
     --master yarn \
     --deploy-mode client \
     ./sparkstreamingkafkaperformance-1.0-SNAPSHOT.jar \
@@ -80,7 +80,7 @@
     --executor-memory 8G --executor-cores 4 --num-executors 10 \
     --conf spark.default.parallelism=480 \
     --conf spark.executor.extraJavaOptions="-XX:MaxGCPauseMillis=100 -XX:ParallelGCThreads=8 -XX:ConcGCThreads=2 -XX:+UseG1GC "
-    --class dataImportKafkaPerformance \
+    --class textProject.dataImportKafkaPerformance \
     --master yarn \
     --deploy-mode client \
     ./sparkstreamingkafkaperformance-1.0-SNAPSHOT.jar \

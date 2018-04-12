@@ -56,7 +56,7 @@ topic：
 这里简单的测试就不指定资源了，生产环境一定要指定
 
     spark2-submit \
-        --class dataImportKafkaPerformance \
+        --class textProject.dataImportKafkaPerformance \
         --master yarn \
         --deploy-mode client \
         ./sparkstreamingkafkaperformance-1.0-SNAPSHOT.jar \
@@ -91,25 +91,25 @@ kafka-console-consumer --topic yc --bootstrap-server datanode1:9092 --partition 
 
     18/03/20 08:25:48 INFO utils.AppInfoParser: Kafka version : 0.10.2-kafka-2.2.0
     18/03/20 08:25:48 INFO utils.AppInfoParser: Kafka commitId : unknown
-    eventRow(20180201,115655,200000010000001,5,7983,1,10000.00 ,S,62259910005001,11000001,其他代码,11/10/2018,01)
-    eventRow(20180201,115658,200000010000004,5,7983,1,10000.00 ,S,62259910005004,11000001,其他代码,11/13/2018,04)
-    eventRow(20180201,115661,200000010000007,5,7983,1,10000.00 ,S,62259910005007,11000001,其他代码,11/16/2018,07)
+    utils.eventRow(20180201,115655,200000010000001,5,7983,1,10000.00 ,S,62259910005001,11000001,其他代码,11/10/2018,01)
+    utils.eventRow(20180201,115658,200000010000004,5,7983,1,10000.00 ,S,62259910005004,11000001,其他代码,11/13/2018,04)
+    utils.eventRow(20180201,115661,200000010000007,5,7983,1,10000.00 ,S,62259910005007,11000001,其他代码,11/16/2018,07)
     
 kafka-console-consumer --topic yc --bootstrap-server datanode1:9092 --partition 1
 
     18/03/20 08:25:54 INFO utils.AppInfoParser: Kafka version : 0.10.2-kafka-2.2.0
     18/03/20 08:25:54 INFO utils.AppInfoParser: Kafka commitId : unknown
-    eventRow(20180201,115656,200000010000002,5,7983,1,10000.00 ,S,62259910005002,11000002,其他代码,11/11/2018,02)
-    eventRow(20180201,115659,200000010000005,5,7983,1,10000.00 ,S,62259910005005,11000002,其他代码,11/14/2018,05)
-    eventRow(20180201,115662,200000010000008,5,7983,1,10000.00 ,S,62259910005008,11000002,其他代码,11/17/2018,08)
+    utils.eventRow(20180201,115656,200000010000002,5,7983,1,10000.00 ,S,62259910005002,11000002,其他代码,11/11/2018,02)
+    utils.eventRow(20180201,115659,200000010000005,5,7983,1,10000.00 ,S,62259910005005,11000002,其他代码,11/14/2018,05)
+    utils.eventRow(20180201,115662,200000010000008,5,7983,1,10000.00 ,S,62259910005008,11000002,其他代码,11/17/2018,08)
 
 kafka-console-consumer --topic yc --bootstrap-server datanode1:9092 --partition 2
 
     18/03/20 08:25:59 INFO utils.AppInfoParser: Kafka version : 0.10.2-kafka-2.2.0
     18/03/20 08:25:59 INFO utils.AppInfoParser: Kafka commitId : unknown
-    eventRow(20180201,115657,200000010000003,5,7983,1,10000.00 ,S,62259910005003,11000003,其他代码,11/12/2018,03)
-    eventRow(20180201,115660,200000010000006,5,7983,1,10000.00 ,S,62259910005006,11000003,其他代码,11/15/2018,06)
-    eventRow(20180201,115663,200000010000009,5,7983,1,10000.00 ,S,62259910005009,11000003,其他代码,11/18/2018,09)
+    utils.eventRow(20180201,115657,200000010000003,5,7983,1,10000.00 ,S,62259910005003,11000003,其他代码,11/12/2018,03)
+    utils.eventRow(20180201,115660,200000010000006,5,7983,1,10000.00 ,S,62259910005006,11000003,其他代码,11/15/2018,06)
+    utils.eventRow(20180201,115663,200000010000009,5,7983,1,10000.00 ,S,62259910005009,11000003,其他代码,11/18/2018,09)
 
 
 # 流式计算
@@ -117,7 +117,7 @@ kafka-console-consumer --topic yc --bootstrap-server datanode1:9092 --partition 
 ## 执行命令
 
     spark2-submit \
-    --class streamingKafkaToIgnitePerformance \
+    --class textProject.streamingKafkaToIgnitePerformance \
     --master yarn \
     --deploy-mode client \
     ./sparkstreamingkafkaperformance-1.0-SNAPSHOT.jar \

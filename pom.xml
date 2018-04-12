@@ -148,6 +148,12 @@
             <version>2.9.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
+            <version>4.0.2</version>
+        </dependency>
+
     </dependencies>
     <build>
         <sourceDirectory>src/main/scala</sourceDirectory>
@@ -193,11 +199,11 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <executable>java</executable>
+                    <executable>scala</executable>
                     <includeProjectDependencies>false</includeProjectDependencies>
                     <includePluginDependencies>false</includePluginDependencies>
                     <classpathScope>compile</classpathScope>
-                    <mainClass>dataImportKafkaPerformance</mainClass>
+                    <mainClass>textProject.dataImportKafkaPerformance</mainClass>
                 </configuration>
             </plugin>
 

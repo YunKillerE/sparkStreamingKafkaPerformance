@@ -1,12 +1,15 @@
+package objectProject
+
 import com.beust.jcommander.JCommander
-import org.apache.kafka.common.serialization.StringDeserializer
+import org.apache.ignite.spark.IgniteDataFrameSettings._
+import org.apache.kafka.common.serialization.{ByteArrayDeserializer, StringDeserializer}
 import org.apache.log4j.Logger
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.streaming.{Duration, StreamingContext}
 import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
-import org.apache.spark.streaming.kafka010.{CanCommitOffsets, HasOffsetRanges, KafkaUtils, OffsetRange}
 import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
-import org.apache.ignite.spark.IgniteDataFrameSettings._
+import org.apache.spark.streaming.kafka010.{CanCommitOffsets, HasOffsetRanges, KafkaUtils, OffsetRange}
+import org.apache.spark.streaming.{Duration, StreamingContext}
+import common.{Args, eventRow, kryoSerializer}
 
 class streamingKafkaToIgnitePerformance {
 
@@ -52,7 +55,7 @@ object streamingKafkaToIgnitePerformance {
     val kafkaParams = Map[String, Object](
       "bootstrap.servers" -> argv.brokers,
       "key.deserializer" -> classOf[StringDeserializer],
-      "value.deserializer" -> classOf[StringDeserializer],
+      "value.deserializer" -> classOf[ByteArrayDeserializer],
       "group.id" -> argv.groupid,
       "auto.offset.reset" -> "latest",
       "session.timeout.ms" -> "30000",
@@ -60,7 +63,7 @@ object streamingKafkaToIgnitePerformance {
     )
     val topics = Array(argv.topic)
 
-    val stream =  KafkaUtils.createDirectStream[String, String](ssc, PreferConsistent, Subscribe[String, String](topics, kafkaParams))
+    val stream =  KafkaUtils.createDirectStream[String, Array[Byte]](ssc, PreferConsistent, Subscribe[String, Array[Byte]](topics, kafkaParams))
 
     /**
       * 开始处理数据
@@ -86,13 +89,12 @@ object streamingKafkaToIgnitePerformance {
             }
       */
 
-        val valueRDD = rdd.map(_.value().split(","))
+        val valueRDD = rdd.map(x=>(x.key(),kryoSerializer.getSerializationObjectByKryo(x.value())))
 
         log.info("开始写入ignite")
 
         import spark.implicits._
-        val df = valueRDD.map(x => eventRow(x(0).replace("(", ""), x(1), x(2), x(3), x(4), x(5), x(6), x(7), x(8), x(9),
-          x(10), x(11), x(12).replace(")", ""))).toDF()
+        val df = valueRDD.toDF()
 
         df.write
           .format(FORMAT_IGNITE)

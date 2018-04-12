@@ -1,7 +1,10 @@
+package textProject
+
 
 import com.beust.jcommander.JCommander
 import org.apache.log4j.Logger
-import org.apache.spark.sql.{SparkSession}
+import org.apache.spark.sql.SparkSession
+import common.{Args, igniteWriter}
 
 class structuredStreamingKafkaToIgnitePerformance {
 
@@ -9,7 +12,7 @@ class structuredStreamingKafkaToIgnitePerformance {
 
 object structuredStreamingKafkaToIgnitePerformance {
 
-  private val log = Logger.getLogger(classOf[streamingKafkaToIgnitePerformance])
+  private val log = Logger.getLogger(classOf[structuredStreamingKafkaToIgnitePerformance])
 
   def main(args: Array[String]): Unit = {
 

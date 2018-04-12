@@ -1,3 +1,5 @@
+package common
+
 
 import java.util.concurrent.Future
 
@@ -17,9 +19,9 @@ class KafkaSink[K, V](createProducer: () => KafkaProducer[K, V]) extends Seriali
 
 object KafkaSink {
   import scala.collection.JavaConversions._
-  def apply[K, V](config: Map[String, Object]): KafkaSink[K, V] = {
+  def apply[K, V](config: Map[String, Object]): KafkaSink[String, Object] = {
     val createProducerFunc = () => {
-      val producer = new KafkaProducer[K, V](config)
+      val producer = new KafkaProducer[String, Object](config)
       sys.addShutdownHook {
         // Ensure that, on executor JVM shutdown, the Kafka producer sends
         // any buffered messages to Kafka before shutting down.
@@ -29,5 +31,9 @@ object KafkaSink {
     }
     new KafkaSink(createProducerFunc)
   }
-  def apply[K, V](config: java.util.Properties): KafkaSink[K, V] = apply(config.toMap)
+  def apply[K, V](config: java.util.Properties): KafkaSink[String, Object] = apply(config.toMap)
 }
+
+
+
+

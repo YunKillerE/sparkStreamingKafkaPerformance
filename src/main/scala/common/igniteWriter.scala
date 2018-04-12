@@ -1,3 +1,5 @@
+package common
+
 import java.sql.{Connection, DriverManager}
 
 import com.sun.mail.iap.ConnectionException

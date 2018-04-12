@@ -1,3 +1,5 @@
+package common
+
 import com.beust.jcommander.Parameter
 
 class Args extends Serializable {

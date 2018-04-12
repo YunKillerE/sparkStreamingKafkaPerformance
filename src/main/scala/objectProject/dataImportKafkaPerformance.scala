@@ -1,10 +1,13 @@
+package objectProject
+
 import java.util.Properties
 
 import com.beust.jcommander.JCommander
-import org.apache.kafka.common.serialization.StringSerializer
+import org.apache.kafka.common.serialization.{ByteArraySerializer, StringSerializer}
 import org.apache.log4j.Logger
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.sql.SparkSession
+import common.{Args, KafkaSink, eventRow, kryoSerializer}
 
 class dataImportKafkaPerformance() {
 
@@ -42,10 +45,10 @@ object dataImportKafkaPerformance {
     /**
       * only used for test
       */
-    log.warn("打印出所有的配置项，供优化参考： \n" + spark.conf.getAll)
+    //log.warn("打印出所有的配置项，供优化参考： \n" + spark.conf.getAll)
 
     log.info("========================================== 初始化kafka producer ==========================================")
-    val kafkaProducer: Broadcast[KafkaSink[String, String]] = {
+    val kafkaProducer: Broadcast[KafkaSink[String, Object]] = {
       val kafkaProducerConfig = {
         val p = new Properties()
         p.setProperty("bootstrap.servers", argv.brokers)
@@ -57,11 +60,11 @@ object dataImportKafkaPerformance {
         p.setProperty("buffer.memory", argv.bufferMem)
         p.setProperty("compression.type", argv.topicCompression)
         p.setProperty("key.serializer", classOf[StringSerializer].getName)
-        p.setProperty("value.serializer", classOf[StringSerializer].getName)
+        p.setProperty("value.serializer", classOf[ByteArraySerializer].getName)
         p
       }
       log.warn("kafka producer init done!")
-      spark.sparkContext.broadcast(KafkaSink[String, String](kafkaProducerConfig))
+      spark.sparkContext.broadcast(KafkaSink[String, Object](kafkaProducerConfig))
     }
 
     /**
@@ -91,10 +94,10 @@ object dataImportKafkaPerformance {
 
     log.info("========================================== 开始转换df ==========================================")
     val filterTableDF = tableDF.map(newRow =>
-        (newRow(0).toString, if ((!(newRow(1).toString).equals(""))) newRow(1).toString else "0",
+        (eventRow(newRow(0).toString,if ((!(newRow(1).toString).equals(""))) newRow(1).toString else "0",
           newRow(2).toString, if (!((newRow(3).toString).equals(""))) newRow(3).toString else "0", newRow(4).toString,
           newRow(5).toString, if (!((newRow(6).toString).equals(""))) newRow(6).toString else "0", newRow(7).toString, newRow(8).toString,
-          newRow(9).toString, newRow(10).toString, newRow(11).toString, newRow(12).toString)
+          newRow(9).toString, newRow(10).toString, newRow(11).toString, newRow(12).toString))
       )
 
     /**
@@ -103,7 +106,7 @@ object dataImportKafkaPerformance {
     log.info("========================================== 开始二次排序 ==========================================")
 
     import org.apache.spark.sql._
-    val sortFilterTableDF = filterTableDF.repartition(argv.partitionNum,new Column("_10")).sortWithinPartitions("_12")
+    val sortFilterTableDF = filterTableDF.repartition(argv.partitionNum,new Column("kehhao")).sortWithinPartitions("huobdh")
 
     /**
       * 然后调用foreatchPartition写入对应的分区，这里是否需要自定义partitioner？
@@ -126,7 +129,7 @@ object dataImportKafkaPerformance {
         val tmp = rows.next()
         var kafkaPartition = 0
         try {
-          kafkaPartition = tmp._10.trim.toInt % argv.partitionNum
+          kafkaPartition = tmp.kehhao.trim.toInt % argv.partitionNum
         }catch{
           case ex: NumberFormatException =>{
             println(ex.getMessage)
@@ -137,7 +140,8 @@ object dataImportKafkaPerformance {
           }
         }
         //log.info("kafkaPartition===============" + kafkaPartition)
-        kafkaProducer.value.send(argv.topic, kafkaPartition ,tmp._10.toString, tmp.toString())
+        kafkaProducer.value.send(argv.topic, kafkaPartition ,tmp.kehhao.toString+"_"+tmp.guiyls.toString+"_"+tmp.jioysj.toString,
+          kryoSerializer.setSerializationObjectByKryo(tmp))
       }
     })
 

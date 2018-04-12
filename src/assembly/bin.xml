@@ -15,6 +15,10 @@
             <outputDirectory>smokeData</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>configFile</directory>
+            <outputDirectory>configFile</outputDirectory>
+        </fileSet>
+        <fileSet>
             <directory>bin</directory>
             <outputDirectory>bin</outputDirectory>
             <directoryMode>0755</directoryMode>

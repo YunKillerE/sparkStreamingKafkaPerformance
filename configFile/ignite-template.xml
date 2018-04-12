@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+       classpath:org/springframework/beans/factory/xml/spring-beans-4.3.xsd">
+
+    <bean id="igniteenvconf" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="order" value="1"/>
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+    </bean>
+
+    <bean id="igniteCfgRecordPair" class="org.apache.ignite.configuration.IgniteConfiguration">
+        <property name="peerClassLoadingEnabled" value="true"/>
+        <property name="gridName" value="RecordPairGrid"/>
+        <property name="failureDetectionTimeout" value="60000"/>
+        <property name="clientFailureDetectionTimeout" value="30000"/>
+        <property name="publicThreadPoolSize" value="64"/>
+        <property name="systemThreadPoolSize" value="32"/>
+
+        <property name="dataStorageConfiguration">
+            <bean class="org.apache.ignite.configuration.DataStorageConfiguration">
+                <property name="storagePath" value="/ssd1/ignite/igniteDisk/persistent" />
+                <property name="walPath" value="/ssd1/ignite/igniteDisk/wal_store"/>
+                <property name="walArchivePath" value="/ssd1/ignite/igniteDisk/wal_archive"/>
+                <property name="pageSize" value="4096"/>
+                <property name="writeThrottlingEnabled" value="true"/>
+
+                <property name="defaultDataRegionConfiguration">
+                    <bean class="org.apache.ignite.configuration.DataRegionConfiguration">
+                        <property name="name" value="Default_Region"/>
+                        <!-- 100MB memory region with disabled eviction -->
+                        <property name="initialSize" value="#{1L * 1024 * 1024 *1024}"/>
+                        <property name="maxSize" value="#{20L * 1024 * 1024 *1024}"/>
+                        <property name="persistenceEnabled" value="false"/>
+                    </bean>
+                </property>
+
+                <property name="dataRegionConfigurations">
+                    <list>
+                        <bean class="org.apache.ignite.configuration.DataRegionConfiguration">
+                            <property name="name" value="Disk_Region"/>
+                            <!-- 100MB memory region with disabled eviction -->
+                            <property name="initialSize" value="#{4L * 1024 * 1024 *1024}"/>
+                            <property name="maxSize" value="#{10L * 1024 * 1024 *1024}"/>
+                            <property name="pageEvictionMode" value="RANDOM_2_LRU"/>
+                            <property name="persistenceEnabled" value="true"/>
+                            <property name="checkpointPageBufferSize" value="#{1024L * 1024 * 1024}"/>
+                        </bean>
+                    </list>
+                </property>
+            </bean>
+        </property>
+
+        <property name="cacheConfiguration">
+            <list>
+
+
+
+                <bean class="org.apache.ignite.configuration.CacheConfiguration">
+                    <property name="name" value="yunchen"/>
+                    <property name="cacheMode" value="PARTITIONED"/>
+                    <property name="backups" value="1"/>
+                    <property name="dataRegionName" value="Disk_Region"/>
+                    <property name="writeSynchronizationMode" value="PRIMARY_SYNC"/>
+
+
+                    <property name="queryEntities">
+                        <list>
+                            <bean class="org.apache.ignite.cache.QueryEntity">
+                                <property name="keyType" value="java.lang.String"/>
+                                <property name="valueType"
+                                          value="common.eventRow"/>
+                                <property name="fields">
+                                    <map>
+                                        <entry key="jioyrq" value="java.lang.String"/>
+                                        <entry key="jioysj" value="java.lang.String"/>
+                                        <entry key="guiyls" value="java.lang.String"/>
+                                        <entry key="cpznxh" value="java.lang.Integer"/>
+                                        <entry key="jiaoym" value="java.lang.String"/>
+                                        <entry key="jiedbz" value="java.lang.String"/>
+                                        <entry key="jio1je" value="java.math.BigDecimal"/>
+                                        <entry key="kemucc" value="java.lang.String"/>
+                                        <entry key="kehuzh" value="java.lang.String"/>
+                                        <entry key="kehhao" value="java.lang.String"/>
+                                        <entry key="zhyodm" value="java.lang.String"/>
+                                        <entry key="hmjsjc" value="java.lang.String"/>
+                                        <entry key="huobdh" value="java.lang.String"/>
+                                    </map>
+                                </property>
+
+                                <property name="indexes">
+                                    <list>
+                                        <bean class="org.apache.ignite.cache.QueryIndex">
+                                            <constructor-arg value="jioyrq"/>
+                                        </bean>
+                                        <bean class="org.apache.ignite.cache.QueryIndex">
+                                            <constructor-arg value="guiyls"/>
+                                        </bean>
+                                        <bean class="org.apache.ignite.cache.QueryIndex">
+                                            <constructor-arg value="cpznxh"/>
+                                        </bean>
+                                        <bean class="org.apache.ignite.cache.QueryIndex">
+                                            <constructor-arg value="kehuzh"/>
+                                        </bean>
+                                        <bean class="org.apache.ignite.cache.QueryIndex">
+                                            <constructor-arg value="kehhao"/>
+                                        </bean>
+                                    </list>
+                                </property>
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+
+            </list>
+        </property>
+        <!-- Configure TCP discovery SPI to provide list of initial nodes. -->
+        <property name="discoverySpi">
+            <bean class="org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi">
+                <property name="ipFinder">
+                    <bean class="org.apache.ignite.spi.discovery.tcp.ipfinder.zk.TcpDiscoveryZookeeperIpFinder">
+                        <property name="zkConnectionString" value="{{ignite_zk_server}}"/>
+                        <property name="basePath" value="{{ignite_zk_watchpath}}"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+</beans>
