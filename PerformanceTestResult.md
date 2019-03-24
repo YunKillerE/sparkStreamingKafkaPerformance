@@ -29,7 +29,7 @@
 
     spark2-submit \
     --executor-memory 8G --executor-cores 4 --num-executors 10 \
-    --conf spark.default.parallelism=1000 \
+    --conf spark.default.parallelism=80 \
     --conf spark.storage.memoryFraction=0.5 \
     --conf spark.shuffle.memoryFraction=0.3 \
     --class textProject.dataImportKafkaPerformance \
@@ -47,15 +47,14 @@
 
 |类别|值|
 |:---|:---|
-|总时间|12.7分钟   |
+|总时间|10.1分钟   |
 
 
 ## 3，减少参数，优化executor的数量
 
     spark2-submit \
-    --executor-memory 20G --executor-cores 5 --num-executors 10 \
-    --conf spark.storage.memoryFraction=0.7 \
-    --conf spark.shuffle.memoryFraction=0.1 \
+    --executor-memory 8G --executor-cores 4 --num-executors 30 \
+    --conf spark.default.parallelism=240 \
     --class textProject.dataImportKafkaPerformance \
     --master yarn \
     --deploy-mode client \
@@ -71,14 +70,14 @@
 
 |类别|值|
 |:---|:---|
-|总时间|13.6分钟   |
+|总时间|9.8分钟   |
 
 
 ## 4.增加GC的优化
 
     spark2-submit \
-    --executor-memory 8G --executor-cores 4 --num-executors 10 \
-    --conf spark.default.parallelism=480 \
+    --executor-memory 8G --executor-cores 4 --num-executors 30 \
+    --conf spark.default.parallelism=360 \
     --conf spark.executor.extraJavaOptions="-XX:MaxGCPauseMillis=100 -XX:ParallelGCThreads=8 -XX:ConcGCThreads=2 -XX:+UseG1GC "
     --class textProject.dataImportKafkaPerformance \
     --master yarn \
@@ -95,15 +94,6 @@
 
 |类别|值|
 |:---|:---|
-|总时间|11.9分钟   |
+|总时间|10.2分钟   |
 
-好奇该，怎么调参数都没法加快时间，感觉是写入kafka的时候太慢了，想办法优化，增大写入线程
-
-
-
-
-
-
-
-
-
+参数要合理，参数不合理反而影响性能
